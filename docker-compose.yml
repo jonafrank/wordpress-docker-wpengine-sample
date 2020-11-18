@@ -1,0 +1,29 @@
+version: '3.3'
+services:
+  test_db:
+    image: mysql:5.7
+    volumes:
+      - ./db_data:/var/lib/mysql
+    restart: always
+    ports:
+      - 33066:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: toor
+      MYSQL_DATABASE: root
+      MYSQL_USER: testuser
+      MYSQL_PASSWORD: testpassword
+  test-web:
+    depends_on:
+      - test_db
+    build: .
+    ports:
+      - 8080:80
+    restart: always
+    volumes:
+      - .:/var/www/html
+      - ~/.ssh:/root/.ssh-local:ro
+    environment:
+      WORDPRESS_DB_HOST: test_db:3306
+      WORDPRESS_DB_USER: testuser
+      WORDPRESS_DB_PASSWORD: testuser
+      WORDPRESS_DB_NAME: testpassword
